@@ -6,28 +6,27 @@ const Course = require('../models').Course;
 
 
 
-
 function asyncHandler(callback){
     return async(req, res, next) => {
       try {
         await callback(req, res, next)
       } catch(error){
-        res.status(500).render('error');
+        res.status(500);
       }
     }
   }
 
-router.get('/api/courses', asyncHandler(async (req, res, next) => {
+router.get('/courses', asyncHandler(async (req, res, next) => {
     const course = await Course.findAll({ order: [['createdAt', 'DESC']]});
     res.sendStatus(200);
   }));
 
-  router.get('/api/courses', asyncHandler(async (req, res) => {
+  router.get('/courses', asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
     res.sendStatus(200);
   }));
   
-router.post('/api/courses/:id', asyncHandler(async (req, res, next) => {
+router.post('/courses/:id', asyncHandler(async (req, res, next) => {
      let course;
      try {
       course = await Course.create({
@@ -45,20 +44,20 @@ router.post('/api/courses/:id', asyncHandler(async (req, res, next) => {
      }
   }));
 
-router.put('/api/courses/:id', asyncHandler(async (req, res, next) => {
+router.put('/courses/:id', asyncHandler(async (req, res, next) => {
     let course = await Course.findByPk(req.params.id);
-    if(course) {
-        await course.update(req.body);
-        res.sendStatus(204).redirect('/'); 
-      } else {
-        res.sendStatus(404);
-      }
+      if(course) {
+          await course.update(req.body);
+          res.sendStatus(204).redirect('/'); 
+        } else {
+          res.sendStatus(404);
+        }
 }));
 
-router.delete('/api/courses/:id', asyncHandler(async (req ,res) => {
+router.delete('/courses/:id', asyncHandler(async (req ,res) => {
     let course = await Course.findByPk(req.params.id)
       await course.destroy();
-      res.sendStatus(204);
+        res.sendStatus(204);
   }));
 
  
