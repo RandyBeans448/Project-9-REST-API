@@ -43,7 +43,7 @@ function asyncHandler(callback){
 
 
 
-router.get('/users', asyncHandler, authenticateUser(async (req, res) => {
+router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
     const user = await User.findByPk(req.params.id);
     bcrypt.compare(req.body.password, hash, function(err, result) {
   });
