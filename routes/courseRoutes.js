@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const router = express.Router();
 const Sequelize = require('sequelize');
+const User = require('../models/User');
 const Course = require('../models').Course;
 
 
@@ -17,12 +18,24 @@ function asyncHandler(callback){
   }
 
 router.get('/courses', asyncHandler(async (req, res, next) => {
-    const course = await Course.findAll({ order: [['createdAt', 'DESC']]});
-    res.sendStatus(200);
+    const course = await Course.findAll({ 
+      order: [['createdAt', 'DESC']],
+      include: { model: User,
+        through: {
+          attributes: ['id', 'firstfirstName', 'lastName', 'email']
+         }
+      }});
+    res.sendStatus(200).end();
   }));
 
-  router.get('/courses', asyncHandler(async (req, res) => {
-    const course = await Course.findByPk(req.params.id);
+  router.get('/courses/:id', asyncHandler(async (req, res) => {
+    const course = await Course.findByPk(req.params.id,
+       { include: {
+          model: User,
+           through: {
+            attributes: ['id', 'firstfirstName', 'lastName', 'email']
+           }       
+      }});
     res.sendStatus(200);
   }));
   
@@ -63,3 +76,5 @@ router.delete('/courses/:id', asyncHandler(async (req ,res) => {
  
 
   module.exports = router;
+
+ 
