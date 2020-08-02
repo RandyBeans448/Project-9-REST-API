@@ -23,7 +23,7 @@ function asyncHandler(callback){
     const credentials = auth(req);
     //If the credentials are exsist then they are compare to an email matching the first name.  
       if (credentials) {
-        const user = User.findOne({ where: { email: credentials.name } })
+        const user = User.findOne({ where: { id: credentials.name } })
         //When true the user has its password comfirmed  
           if (user) {
             const authenticated = bcryptjs
@@ -93,4 +93,3 @@ router.get('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 
   module.exports = router;
 
- 
