@@ -2,11 +2,11 @@ const express = require('express');
 const morgan = require('morgan');
 const router = express.Router();
 const Sequelize = require('sequelize');
-const User = require('../models/User');
+const User = require('../models/User').User;
 const Course = require('../models').Course;
 const auth = require('basic-auth');
 const bcrypt = require('bcryptjs');
-let usersArray = [];
+
 
 function asyncHandler(callback){
     return async(req, res, next) => {
@@ -18,31 +18,48 @@ function asyncHandler(callback){
     }
   }
 
-const authenticateUser = (req, res, next) => { 
-    //Parsing Authorization Header from the request
-    const credentials = auth(req);
-    //If the credentials are exsist then they are compare to an email matching the first name.  
-      if (credentials) {
-        const user = usersArray.find(user => user.emailAddress === credentials.name);
-        //When true the user has its password comfirmed  
-          if (user) {
-            const authenticated = bcrypt
-              .compareSync(credentials.pass, user.password);
-              //Then is the user is set the current User in the request object
-              if (authenticated) {
-                req.currentUser = user;               
-              } else {
-                console.log(`Authentication failed for username: ${user.firstName}`);
-              }
-          } else {
-            console.log(`User not found with the name of ${credentials.firstName}`)
-          }
-      } else {
-        console.log("Autho not found");
-      }
-    next();
+  async function authenticateUser (req, res, next) {
+    try {
+      console.log('finding')
+      const users = await User.findAll();
+      console.log('found')
+      //Parsing Authorization Header from the request
+      console.log('parsing');
+      const credentials = auth(req);
+      console.log('parsed');
+      //If the credentials are exsist then they are compare to an email matching the first name.  
+        if (credentials) {
+          console.log('finding users');
+          const user = users.find(user => user.emailAddress === credentials.name);
+          console.log('found user');
+          //When true the user has its password comfirmed  
+            if (user) {
+              console.log('Starting bcrypt');
+              const authenticated = bcrypt
+                .compareSync(credentials.pass, user.password);
+                //Then is the user is set the current User in the request object
+                console.log('finshed bcrypt');
+                if (authenticated) {
+                  console.log('Authenticate user');
+                  req.currentUser = user;
+                  console.log('Access granted: Log in details vaild');               
+                } else {
+                  console.log(`Authentication failed for username: ${user.firstName}`);
+                }
+            } else {
+              console.log(`User not found with the name of ${credentials.firstName}`)
+            }
+        } else {
+          console.log("Autho not found");
+        }
+    } catch(error) {
+      next();
+    }
   };
 
+
+  //Find all courses
+  //Working 
 router.get('/courses', asyncHandler(async (req, res, next) => {
     const courses = await Course.findAll({
       attributes: { exclude: ['createdAt','updatedAt'] } 
@@ -51,55 +68,83 @@ router.get('/courses', asyncHandler(async (req, res, next) => {
         res.json({ courses }).sendStatus(200);
 }));
 
+
+//Find specfic course
+//Working except excludes
 router.get('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
-  let course = await Course.findByPk(req.params.id, {
-      attributes: {
-          include: [{ model: User, as: 'userID' }],
-            exclude: ['createdAt','updatedAt'] 
-  }});
+  console.log('Starting')
+  let course = await Course.findOne(req.currentUser, {
+    include: {
+       model: User,
+        as: 'userID',
+      attributes: { exclude: ['createdAt','updatedAt'] },
+    },
+    attributes: { exclude: ['createdAt','updatedAt'] },
+  });
+    
     if (course) {
-        usersArray.push(course);
+      console.log('Course found')
           console.log(course);
             res.json({ course }).sendStatus(200).end();
      } else {
         console.log('Course not found');
           res.sendStatus(404);
      }
+     console.log('finshed');
   }));
   
-// router.post('/courses', asyncHandler(async (req, res, next) => {
-//      let course;
-//      try {
-//       course = await Course.create({
-//         title: req.body.title,
-//         description: req.body.description,
-//         estimatedTime: req.body.estimatedTime,
-//         materialsNeeded: req.body.materialsNeeded })
-//         res.sendStatus(201).setHeader("Location", '/');
-//      } catch(error){
-//       if(error.name === 'SequelizeValidationError') {
-//         course = await Course.build(req.build);
-//       } else {
-//         throw error;
-//       }
-//      }
-//   }));
 
-// router.put('/courses/:id', asyncHandler(async (req, res, next) => {
-//     let course = await Course.findByPk(req.params.id);
-//       if(course) {
-//           await course.update(req.body);
-//           res.sendStatus(204).redirect('/'); 
-//         } else {
-//           res.sendStatus(404);
-//         }
-// }));
+//Create course
+//Working 
+router.post('/courses', asyncHandler(async (req, res, next) => {
+  console.log('Starting');
+     let course;
+          try {
+                console.log('try');
+                course = await Course.create(req.body);
+            if (course) {
+                  console.log('course')
+                  res.sendStatus(201);
+                  console.log('Finshed');
+                }
+            } catch(error){
+              if(error.name === 'SequelizeValidationError') {
+                course = await Course.build(req.build);
+              } else {
+                throw error;
+              }
+            }
+     
+  }));
 
-// router.delete('/courses/:id', asyncHandler(async (req ,res) => {
-//     let course = await Course.findByPk(req.params.id)
-//       await course.destroy();
-//         res.sendStatus(204);
-//   }));
+
+//Update course 
+//Working
+router.put('/courses/:id', asyncHandler(async (req, res, next) => {
+  console.log('Starting');
+    let course = await Course.findOne(req.currentUser);
+    console.log('Found');
+      if(course) {
+        console.log('True');
+          await course.update(req.body);
+          console.log('updated');
+          res.sendStatus(204);
+          console.log('Status: 204'); 
+        } else {
+          console.log('Untrue');
+          res.sendStatus(404);
+          console.log('Status: 404');
+        }
+        console.log('finished');
+}));
+
+
+//Delete a entry
+//Working
+router.delete('/courses/:id', authenticateUser, asyncHandler(async (req ,res) => {
+    let course = await Course.findByPk(req.params.id)
+      await course.destroy();
+        res.sendStatus(204);
+  }));
 
 module.exports = router;
-
