@@ -6,7 +6,6 @@ const User = require('../models').User;
 const Course = require('../models').Course;
 const bcrypt = require('bcryptjs');
 const auth = require('basic-auth');
-let usersArray = [];
 
 function asyncHandler(callback){
     return async(req, res, next) => {
