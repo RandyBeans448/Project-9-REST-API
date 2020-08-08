@@ -1,70 +1,60 @@
+'use strict'
+
 const Sequelize = require('sequelize');
-const bcrypt = require('bcryptjs');
-'use strict';
+
 module.exports = (sequelize) => {
-    class User extends Sequelize.Model {}
-    User.init({
-        id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-          },
-          firstName: {
-            type: Sequelize.STRING,
-            allowNull: false, // disallow null
-            validate: {
+  class User extends Sequelize.Model {}
+  User.init({
+      id: {
+          type: Sequelize.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        firstName: {
+          type: Sequelize.STRING,
+          allowNull: false, // disallow null
+          validate: {
               notEmpty: {
-                msg: 'Please provide a value for "first name"'
+                msg: 'Please provide a "first name"'
               }
-             }
-          },
-          lastName: {
-            type: Sequelize.STRING,
-            allowNull: false, // disallow null
-            validate: {
+           }
+        },
+        lastName: {
+          type: Sequelize.STRING,
+          allowNull: false, // disallow null
+          validate: {
               notEmpty: {
-                msg: 'Please provide a "lastName"'
+                msg: 'Please provide a "last name"'
               }
-             }
-          },
-          email: {
-            type: Sequelize.STRING,
-            allowNull: false, // disallow null
-            validate: {
+           }
+        },
+        emailAddress: {
+          type: Sequelize.STRING,
+          validate: {
               notEmpty: {
-                msg: 'Please provide a "email"'
+                  msg: "Please provide value for 'emailAddress'"
               }
-             }
-          },
-          password: {
-            type: Sequelize.STRING,
-            allowNull: false, // disallow null
-            validate: {
+          }
+      },
+        password: {
+          type: Sequelize.STRING,
+          allowNull: false, // disallow null
+          validate: {
               notEmpty: {
                 msg: 'Please provide a "password"'
               }
-             }
-            }
-              // instanceMethods: {
-              //   generateHash: function (password) {
-              //     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
-              //   },
-              //   validPassword: function (password) {
-              //     return bcrypt.compareSync(password, this.password)
-              //   }
-              // }
-    }, { sequelize });
+           }
+        }
+     }, { sequelize });
 
-       User.associate = (models) => {
-        User.hasMany(models.Course, {
-          as: 'userID', // alias
-          foreignKey: {
-            fieldName: 'UserID',
-            allowNull: 'false'
-          },
-        });
-      };
-
-    return User
+     User.associate = (models) => {
+      User.hasMany(models.Course, {
+        as: 'userID', // alias
+        foreignKey: {
+          fieldName: 'UserID',
+          allowNull: 'false'
+        },
+      })
+    }
+  return User;
 }
-
