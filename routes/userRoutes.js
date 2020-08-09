@@ -75,24 +75,26 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
 
 //Create user
 //Not working 
-  router.post('/users', asyncHandler(async (req, res, next) => {
+  router.post('/users', authenticateUser, asyncHandler(async (req, res, next) => {
     console.log('Starting');
        let user;
             try {
                   console.log('try');
                   user = await User.create(req.body);
-              if (user) {
-                    console.log('user created')
-                    res.sendStatus(201).location(`${users/user.id}`);
-                    console.log('Finshed');
+                  if(user.emailAddress === req.currentUser.emailAddress) {
+                    console.log('An account with email already exists')
+                    user = await User.build(req.build)
                   }
-              } catch(error){
-                if(error.name === 'SequelizeValidationError') {
-                  user = await User.build(req.build);
-                } else {
-                  throw error;
-                }
-              }     
+                  if (user) {
+                        console.log('user created')
+                        res.sendStatus(201).location(`${users/user.id}`);
+                        console.log('Finshed');
+                      }
+                  } catch(error){
+                    if(error.name === 'SequelizeValidationError') {
+                      user = await User.build(req.build);
+                    } else {
+                      throw error;
+                    }
+                  }     
     }));
-
-  module.exports = router;
