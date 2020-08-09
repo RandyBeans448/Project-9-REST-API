@@ -58,8 +58,8 @@ function asyncHandler(callback){
   };
 
 
-  //Find all courses
-  //Working 
+//Find all courses
+//Working 
 router.get('/courses', asyncHandler(async (req, res, next) => {
     const courses = await Course.findAll({
       attributes: { exclude: ['createdAt','updatedAt'] } 
@@ -96,7 +96,7 @@ router.get('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
 
 //Create course
 //Working 
-router.post('/courses', asyncHandler(async (req, res, next) => {
+router.post('/courses',  asyncHandler(async (req, res, next) => {
   console.log('Starting');
      let course;
           try {
@@ -104,7 +104,7 @@ router.post('/courses', asyncHandler(async (req, res, next) => {
                 course = await Course.create(req.body);
             if (course) {
                   console.log('course')
-                  res.sendStatus(201);
+                  res.sendStatus(201).location(`${courses/course.id}`);
                   console.log('Finshed');
                 }
             } catch(error){
@@ -120,7 +120,7 @@ router.post('/courses', asyncHandler(async (req, res, next) => {
 
 //Update course 
 //Working
-router.put('/courses/:id', asyncHandler(async (req, res, next) => {
+router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
     let course = await Course.findOne(req.currentUser);
     console.log('Found');
