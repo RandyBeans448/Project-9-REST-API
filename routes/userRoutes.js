@@ -58,10 +58,11 @@ function asyncHandler(callback){
   };
 
 //Works with no autho
-router.get('/users',  asyncHandler(async (req, res, next) => {
+router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-    let authedUser = await User.findOne(req.currentUser);
+    let authedUser = await User.find(req.currentUser);
       if (authedUser) {
+        console.log('Authed users');
         console.log(authedUser);
         res.json({ authedUser });    
       } else {
@@ -69,25 +70,20 @@ router.get('/users',  asyncHandler(async (req, res, next) => {
         res.sendStatus(404);
       } 
         console.log('finshed'); 
-         
 }));
   
 
-  //Create user
-  //Not working 
+//Create user
+//Not working 
   router.post('/users', asyncHandler(async (req, res, next) => {
     console.log('Starting');
        let user;
             try {
                   console.log('try');
-                  user = await User.create({
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    emailAddress: req.body.emailAddress,
-                    password: req.body.password});
+                  user = await User.create(req.body);
               if (user) {
                     console.log('user created')
-                    res.sendStatus(201);
+                    res.sendStatus(201).location(`${users/user.id}`);
                     console.log('Finshed');
                   }
               } catch(error){
@@ -100,4 +96,3 @@ router.get('/users',  asyncHandler(async (req, res, next) => {
     }));
 
   module.exports = router;
-
