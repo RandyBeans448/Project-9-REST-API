@@ -35,10 +35,10 @@ module.exports = (sequelize) => {
                   msg: "Please provide value for 'emailAddress'"
               },
               is: {
-                  args: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                  msg: "Please provide a VALID 'emailAddress'"
-              }
-          }
+                  args: ^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$,
+                  msg: "Please provide a valid 'emailAddress'"
+              },
+          },
       },
         password: {
           type: Sequelize.STRING,
