@@ -59,21 +59,26 @@ function asyncHandler(callback){
     console.log('All done');
   };
 
-//Works with no autho
+
 router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-    let authedUser = await User.find(req.currentUser, {
-      attributes: { exclude: ['createdAt','updatedAt', 'password'] }
-    })
-      if (authedUser) {
-        console.log('Authed users');
-        console.log(authedUser);
-        res.json({ authedUser });    
-      } else {
-        console.log('Course not found');
-        res.sendStatus(404);
-      } 
-        console.log('finshed'); 
+    let authedUser;
+    try {
+      authedUser = await User.find(req.currentUser, {
+        attributes: { exclude: ['createdAt','updatedAt', 'password'] }
+      })
+        if(authedUser) {
+          console.log('Authed users');
+          console.log(authedUser);
+          res.json({ authedUser });   
+        } else {
+          throw error
+        }
+    } catch (error) {
+      console.log('Course not found');
+      res.sendStatus(404);
+    }
+ console.log('finshed'); 
 }));
   
 
