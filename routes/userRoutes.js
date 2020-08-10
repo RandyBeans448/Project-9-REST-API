@@ -84,6 +84,7 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
                   if(user.emailAddress === req.currentUser.emailAddress) {
                     console.log('An account with email already exists')
                     user = await User.build(req.build)
+                    res.sendStatus(400);
                   }
                   if (user) {
                         console.log('user created')
