@@ -4,9 +4,11 @@ const router = express.Router();
 const Sequelize = require('sequelize');
 const User = require('../models').User;
 const Course = require('../models').Course;
-const bcrypt = require('bcryptjs');
+const bcryptjs = require('bcryptjs');
 const auth = require('basic-auth');
 
+
+//aysncHandler
 function asyncHandler(callback){
     return async(req, res, next) => {
       try {
@@ -34,7 +36,7 @@ function asyncHandler(callback){
           //When true the user has its password comfirmed  
             if (user) {
               console.log('Starting bcrypt');
-              const authenticated = bcrypt
+              const authenticated = bcryptjs
                 .compareSync(credentials.pass, user.password);
                 //Then is the user is set the current User in the request object
                 console.log('finshed bcrypt');
@@ -60,7 +62,9 @@ function asyncHandler(callback){
 //Works with no autho
 router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-    let authedUser = await User.find(req.currentUser);
+    let authedUser = await User.find(req.currentUser, {
+      attributes: { exclude: ['createdAt','updatedAt', 'password'] }
+    })
       if (authedUser) {
         console.log('Authed users');
         console.log(authedUser);
@@ -84,7 +88,7 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
                   if(user.emailAddress === req.currentUser.emailAddress) {
                     console.log('An account with email already exists')
                     user = await User.build(req.build)
-                    res.sendStatus(400);
+                    res.status(400);
                   }
                   if (user) {
                         console.log('user created')
@@ -99,3 +103,6 @@ router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
                     }
                   }     
     }));
+
+  module.exports = router;
+
