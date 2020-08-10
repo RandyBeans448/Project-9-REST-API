@@ -33,6 +33,10 @@ module.exports = (sequelize) => {
           validate: {
               notEmpty: {
                   msg: "Please provide value for 'emailAddress'"
+              },
+              is: {
+                  args: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                  msg: "Please provide a VALID 'emailAddress'"
               }
           }
       },
@@ -48,7 +52,7 @@ module.exports = (sequelize) => {
      }, { sequelize });
 
      User.associate = (models) => {
-      User.hasMany(models.Course, {
+      User.belongsTo(models.Course, {
         as: 'userID', // alias
         foreignKey: {
           fieldName: 'UserID',
@@ -58,3 +62,4 @@ module.exports = (sequelize) => {
     }
   return User;
 }
+
