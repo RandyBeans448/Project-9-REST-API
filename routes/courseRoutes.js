@@ -121,21 +121,22 @@ router.post('/courses',  asyncHandler(async (req, res, next) => {
 //Working
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-    let course = await Course.findOne(req.currentUser);
-    console.log('Found');
-      if(course) {
-        console.log('True');
-          await course.update(req.body);
-          console.log('updated');
-          res.sendStatus(204);
-          console.log('Status: 204'); 
-        } else {
-          console.log('Untrue');
-          res.sendStatus(404);
-          console.log('Status: 404');
-        }
-        console.log('finished');
-}));
+    let course; 
+      try {
+        course = await Course.findOne(req.currentUser);
+            if(course.id === req.currentUser.id) {
+              await course.update(req.body);
+              console.log('updated');
+              res.sendStatus(204);
+              console.log('Status: 204'); 
+            } else {
+              throw error
+            }
+      } catch (error) {
+        console.log('Untrue');
+        res.sendStatus(404);
+        console.log('Status: 404');
+      }
 
 //Delete a entry
 //Working
