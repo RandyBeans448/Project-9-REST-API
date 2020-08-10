@@ -1,6 +1,7 @@
+'use strict'
+
 const Sequelize = require('sequelize');
 
-'use strict';
 module.exports = (sequelize) => {
     class Course extends Sequelize.Model {}
     Course.init({
@@ -54,4 +55,5 @@ module.exports = (sequelize) => {
 
     return Course
 }
+
 
