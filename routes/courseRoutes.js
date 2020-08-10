@@ -78,8 +78,7 @@ router.get('/courses/:id', authenticateUser, asyncHandler(async (req, res) => {
        model: User,
         as: 'userID',
       attributes: { exclude: ['createdAt','updatedAt'] },
-    },
-    attributes: { exclude: ['createdAt','updatedAt'] },
+    }
   });
     
     if (course) {
