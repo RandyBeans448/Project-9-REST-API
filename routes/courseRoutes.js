@@ -5,7 +5,7 @@ const Sequelize = require('sequelize');
 const User = require('../models/User').User;
 const Course = require('../models').Course;
 const auth = require('basic-auth');
-const bcrypt = require('bcryptjs');
+const bcryptjs = require('bcryptjs');
 
 
 function asyncHandler(callback){
@@ -35,7 +35,7 @@ function asyncHandler(callback){
           //When true the user has its password comfirmed  
             if (user) {
               console.log('Starting bcrypt');
-              const authenticated = bcrypt
+              const authenticated = bcryptjs
                 .compareSync(credentials.pass, user.password);
                 //Then is the user is set the current User in the request object
                 console.log('finshed bcrypt');
@@ -137,6 +137,8 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next)
         res.sendStatus(404);
         console.log('Status: 404');
       }
+}));
+
 
 //Delete a entry
 //Working
@@ -154,6 +156,7 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req ,res) =>
       console.log('This course does not exist')
       res.sendStatus(400);
     }
+ 
   }));
 
 module.exports = router;
