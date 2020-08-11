@@ -59,36 +59,27 @@ function asyncHandler(callback){
     console.log('All done');
   };
 
-
-router.get('/users', authenticateUser, asyncHandler(async (req, res, next) => {
+//Works with no autho
+router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
   console.log('Starting');
-    let authedUser;
-    try {
-      authedUser = await User.find(req.currentUser, {
-        attributes: { exclude: ['createdAt','updatedAt', 'password'] }
-      })
-        if(authedUser) {
-          console.log('Authed users');
-          console.log(authedUser);
-          res.json({ authedUser });   
-        } else {
-          throw error
-        }
-    } catch (error) {
-      console.log('Course not found');
-      res.sendStatus(404);
-    }
- console.log('finshed'); 
+    let authedUser = req.currentUser;
+    res.json({
+      id: authedUser.id,
+      firstName: authedUser.firstName,
+      lastName: authedUser.lastName,
+      emailAddress: authedUser.emailAddress
+    }).sendStatus(200);
 }));
   
 
 //Create user
 //Not working 
-router.post('/users', authenticateUser, asyncHandler(async (req, res, next) => {
+router.post('/users', asyncHandler(async (req, res, next) => {
+  let user;
     try {
       console.log('try');
       user = await User.create(req.body);
-      if(user.emailAddress === req.currentUser.emailAddress) {
+      if(user.emailAddress === req.body) {
         console.log('An account with email already exists')
         user = await User.build(req.build)
         res.status(400);
@@ -109,4 +100,5 @@ router.post('/users', authenticateUser, asyncHandler(async (req, res, next) => {
 }));
 
   module.exports = router;
+
 
