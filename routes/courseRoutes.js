@@ -143,20 +143,9 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next)
 //Delete a entry
 //Working
 router.delete('/courses/:id', authenticateUser, asyncHandler(async (req ,res) => {
-    let course;
-    try {
-      course = await Course.findByPk(req.params.id)
-      if(course.id === req.currentUser.id) {
-        await course.destroy();
-        res.sendStatus(204);
-      } else {
-        throw error
-      }
-    } catch (error) {
-      console.log('This course does not exist')
-      res.sendStatus(400);
-    }
- 
+    let courseToGo = await Course.findOne(req.body);
+      courseToGo.destroy();
+      res.sendStatus(204);
   }));
 
 module.exports = router;
