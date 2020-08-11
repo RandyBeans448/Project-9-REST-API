@@ -124,7 +124,8 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next)
     let course; 
       try {
         course = await Course.findOne(req.currentUser);
-            if(course.id === req.currentUser.id) {
+        console.log(course);
+            if(course) {
               await course.update(req.body);
               console.log('updated');
               res.sendStatus(204);
@@ -149,3 +150,4 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req ,res) =>
   }));
 
 module.exports = router;
+
