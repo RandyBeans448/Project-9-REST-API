@@ -30,15 +30,11 @@ module.exports = (sequelize) => {
         },
         emailAddress: {
           type: Sequelize.STRING,
+          allowNull: false, // disallow null
           validate: {
-              notEmpty: {
-                  msg: "Please provide value for 'emailAddress'"
-              },
-              is: {
-                  args: ^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$,
-                  msg: "Please provide a valid 'emailAddress'"
-              },
-          },
+              isEmail: true,
+              msg: 'Please provide a vaild email address'
+          }
       },
         password: {
           type: Sequelize.STRING,
@@ -52,14 +48,15 @@ module.exports = (sequelize) => {
      }, { sequelize });
 
      User.associate = (models) => {
-      User.belongsTo(models.Course, {
-        as: 'userID', // alias
+      User.hasMany(models.Course, {
+        as: 'courseId', // alias
         foreignKey: {
-          fieldName: 'UserID',
+          fieldName: 'id',
           allowNull: 'false'
         },
       })
     }
   return User;
 }
+
 
