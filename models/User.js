@@ -3,60 +3,54 @@
 const Sequelize = require('sequelize');
 
 module.exports = (sequelize) => {
-  class User extends Sequelize.Model {}
-  User.init({
-      id: {
-          type: Sequelize.INTEGER,
-          primaryKey: true,
-          autoIncrement: true,
-        },
-        firstName: {
-          type: Sequelize.STRING,
-          allowNull: false, // disallow null
-          validate: {
+    class Course extends Sequelize.Model {}
+    Course.init({
+        id: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+          },
+          title: {
+            type: Sequelize.STRING,
+            allowNull: false, // disallow null
+            validate: {
               notEmpty: {
-                msg: 'Please provide a "first name"'
+                msg: 'Please provide a "title"'
               }
-           }
-        },
-        lastName: {
-          type: Sequelize.STRING,
-          allowNull: false, // disallow null
-          validate: {
+             }
+          },
+          description: {
+            type: Sequelize.STRING,
+            allowNull: false, // disallow null
+            validate: {
               notEmpty: {
-                msg: 'Please provide a "last name"'
+                msg: 'Please provide a "description"'
               }
-           }
-        },
-        emailAddress: {
-          type: Sequelize.STRING,
-          allowNull: false, // disallow null
-          validate: {
-              isEmail: true,
-              msg: 'Please provide a vaild email address'
+             }
+          },
+          estimatedTime: {
+            type: Sequelize.STRING,
+            allowNull: true, // allow null
+          },
+          materialsNeeded: {
+            type: Sequelize.STRING,
+            allowNull: true, // allow null
           }
-      },
-        password: {
-          type: Sequelize.STRING,
-          allowNull: false, // disallow null
-          validate: {
-              notEmpty: {
-                msg: 'Please provide a "password"'
-              }
-           }
-        }
-     }, { sequelize });
 
-     User.associate = (models) => {
-      User.hasMany(models.Course, {
-        as: 'courseId', // alias
-        foreignKey: {
-          fieldName: 'id',
-          allowNull: 'false'
-        },
-      })
-    }
-  return User;
+       }, { sequelize });
+
+       Course.associate = (models) => {
+        Course.belongsTo(models.User, {
+          as: 'userId', // alias
+          foreignKey: {
+            fieldName: 'id',
+            allowNull: 'false'
+          },
+        });
+      };
+
+    return Course
 }
+
 
 
