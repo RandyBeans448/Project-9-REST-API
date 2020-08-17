@@ -10,10 +10,6 @@ module.exports = (sequelize) => {
             primaryKey: true,
             autoIncrement: true,
           },
-          userId: {
-            type: Sequelize.INTEGER,
-            allowNull: false, // disallow null
-          },
           title: {
             type: Sequelize.STRING,
             allowNull: false, // disallow null
@@ -44,10 +40,10 @@ module.exports = (sequelize) => {
        }, { sequelize });
 
        Course.associate = (models) => {
-        Course.hasMany(models.User, {
-          as: 'userID', // alias
+        Course.belongsTo(models.User, {
+          as: 'userId', // alias
           foreignKey: {
-            fieldName: 'UserID',
+            fieldName: 'id',
             allowNull: 'false'
           },
         });
