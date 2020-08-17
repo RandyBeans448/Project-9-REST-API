@@ -118,24 +118,35 @@ router.post('/users', [
 
      // Hash the new user's password.
     user.password = bcryptjs.hashSync(user.password);
+
     console.log('Hashed');
+
     const currentUsers = await User.findAll();
-    const findUserEmail = currentUsers.find(u => u.emailAddress === u.emailAddress);
+    
+    console.log('Finding');
+
+    const findUserEmail = currentUsers.find(u => u.emailAddress === user.emailAddress);
+
     let userEmail = findUserEmail;
-    if (user.emailAddress === userEmail.emailAddress) {
+
+    if (user.emailAddress === userEmail) {
+
       console.log('User with this email already exists')
+
       return res.status(500).end();
-      }
-     else {
+
+      } else {
+
     // Add the user to the `users` array.
     users.push(user);
+
     console.log(user);
+
     console.log(user.emailAddress);
+
     // Set the status to 201 Created and end the response.
     return res.status(201).end();
     }  
 }));
 
 module.exports = router;
-
-
