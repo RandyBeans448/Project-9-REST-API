@@ -114,7 +114,18 @@ router.post('/users', [
     }
   
     // Get the user from the request body.
-    const user = req.body;
+    
+    console.log('starting')
+
+    let user = await User.create({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      emailAddress: req.body.emailAddress,
+      password: req.body.password
+    });
+
+    // let user = await User.create(req.body);
+    console.log('created')
 
      // Hash the new user's password.
     user.password = bcryptjs.hashSync(user.password);
@@ -125,11 +136,11 @@ router.post('/users', [
     
     console.log('Finding');
 
-    const findUserEmail = currentUsers.find(u => u.emailAddress === user.emailAddress);
+    const findUserEmail = currentUsers.find(u => u.emailAddress === JSON.stringify(user.emailAddress));
 
     let userEmail = findUserEmail;
 
-    if (user.emailAddress === userEmail) {
+    if (user.emailAddress === userEmail.emailAddress) {
 
       console.log('User with this email already exists')
 
