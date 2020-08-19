@@ -15,7 +15,8 @@ function asyncHandler(callback){
       try {
         await callback(req, res, next)
       } catch(error){
-        res.status(500);
+        next(error)
+        console.log(error)
       }
     }
   }
@@ -116,15 +117,19 @@ router.post('/users', [
     // Get the user from the request body.
     
     console.log('starting')
-
-    let user = await User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      emailAddress: req.body.emailAddress,
-      password: req.body.password
-    });
+    
+    // let user = await User.create({
+    //   firstName: req.body.firstName,
+    //   lastName: req.body.lastName,
+    //   emailAddress: req.body.emailAddress,
+    //   password: req.body.password
+    // });
 
     // let user = await User.create(req.body);
+    let user = req.body;
+    await User.create(user);
+    console.log(user);
+
     console.log('created')
 
      // Hash the new user's password.
@@ -132,15 +137,19 @@ router.post('/users', [
 
     console.log('Hashed');
 
-    const currentUsers = await User.findAll();
+    const currentUsers = await User.findAll({
+      attributes: ['emailAddress']
+    });
     
     console.log('Finding');
+   
+    let foundUserEmails = JSON.stringify(currentUsers);
 
-    const findUserEmail = currentUsers.find(u => u.emailAddress === JSON.stringify(user.emailAddress));
+    // const findUserEmail = emails.find(u => u.emailAddress === user.emailAddress);
 
-    let userEmail = findUserEmail;
+    // let userEmail = findUserEmail;
 
-    if (user.emailAddress === userEmail.emailAddress) {
+    if (user.emailAddress === foundUserEmails) {
 
       console.log('User with this email already exists')
 
