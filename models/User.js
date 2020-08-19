@@ -32,8 +32,9 @@ module.exports = (sequelize) => {
           type: Sequelize.STRING,
           allowNull: false, // disallow null
           validate: {
-              isEmail: true,
+            isEmail: {
               msg: 'Please provide a vaild email address'
+            }
           }
       },
         password: {
