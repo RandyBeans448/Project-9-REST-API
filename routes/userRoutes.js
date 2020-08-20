@@ -117,25 +117,15 @@ router.post('/users', [
     // Get the user from the request body.
     
     console.log('starting')
-    
-    // let user = await User.create({
-    //   firstName: req.body.firstName,
-    //   lastName: req.body.lastName,
-    //   emailAddress: req.body.emailAddress,
-    //   password: req.body.password
-    // });
 
-    // let user = await User.create(req.body);
     let user = req.body;
-    await User.create(user);
-    console.log(user);
 
-    console.log('created')
-
-     // Hash the new user's password.
+    // Hash the new user's password.
     user.password = bcryptjs.hashSync(user.password);
 
-    console.log('Hashed');
+    await User.create(user);
+
+    console.log(user);
 
     const currentUsers = await User.findAll({
       attributes: ['emailAddress']
@@ -144,10 +134,6 @@ router.post('/users', [
     console.log('Finding');
    
     let foundUserEmails = JSON.stringify(currentUsers);
-
-    // const findUserEmail = emails.find(u => u.emailAddress === user.emailAddress);
-
-    // let userEmail = findUserEmail;
 
     if (user.emailAddress === foundUserEmails) {
 
