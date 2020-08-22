@@ -68,31 +68,25 @@ function asyncHandler(callback){
     }
   };
 
-
 //Find all courses
 //Working 
-router.get('/courses', authenticateUser, asyncHandler(async (req, res, next) => {
-  const courses = req.currentUser;
-     await Course.findByPk(courses.id);
-      console.log(courses);
-      res.json({ courses });
-
+router.get('/courses', asyncHandler(async (req, res, next) => {
+  const courses = await Course.findAll();
+    console.log(courses);
+      res.json({courses});
 }));
 
-
 //Find specfic course
-//Working except excludes
 router.get('/courses/:id', asyncHandler(async (req, res, next) => {
   console.log('Starting');
-  let course = await Course.findByPk(req.params.id);
+    let course = await Course.findByPk(req.params.id);
     console.log(course);
       res.json({course});
   }));
   
-
 //Create course
 //Working 
-router.post('/courses',  [
+router.post('/courses', [
   check('title')
   .exists({ checkNull: true, checkFalsy: true })
   .withMessage('Please provide a value for "title"'),
@@ -113,14 +107,16 @@ check('description')
   }
 
   // Get the course from the request body.
-  const course = req.body;
+  // const course = req.body;
+
+  const course = await Course.create(req.body);
 
   // Add the user to the `users` array.
   coursesArray.push(course);
   console.log(course);
 
   // Set the status to 201 Created and end the response.
-  return res.status(204).end();
+  return res.status(201).end();
   
   }));
 
@@ -128,27 +124,25 @@ check('description')
 //Update course 
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-  let course = req.currentUser;
-  if (course) {
-    await course.update(req.body);
-    console.log('updated');
-    res.json({ course });
-    res.sendStatus(204);
+  let user = req.currentUser;
+  let course = await Course.findByPk(req.params.id);
+  console.log(course);
+  if (course.userId === user.id) {
+    course.update(req.body);
+      console.log('updated');
+      res.sendStatus(204);
   } else {
-    console.log('Untrue');
-    res.sendStatus(403);
+      console.log('Failed');
+      res.sendStatus(403);
   }
 }));
-
 
 //Delete a entry
 //Working
 router.delete('/courses/:id', authenticateUser, asyncHandler(async (req ,res) => {
-    let courseToGo = await Course.findOne(req.body);
-      courseToGo.destroy();
+    let courseToDelete = await Course.findOne(req.body);
+      courseToDelete.destroy();
       res.sendStatus(204);
   }));
 
 module.exports = router;
-
-
