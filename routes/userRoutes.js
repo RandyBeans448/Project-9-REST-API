@@ -151,6 +151,7 @@ router.post('/users', [
     console.log(user.emailAddress);
 
     // Set the status to 201 Created and end the response.
+    res.location('/');
     return res.status(201).end();
     }  
 }));
