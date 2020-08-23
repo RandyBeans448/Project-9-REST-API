@@ -73,7 +73,12 @@ function asyncHandler(callback){
 router.get('/courses', asyncHandler(async (req, res, next) => {
   const courses = await Course.findAll();
     console.log(courses);
-      res.json({courses});
+    res.json({
+      id: courses.id,
+      title: courses.title,
+      description: courses.description,
+      holder: courses.userId
+    });
 }));
 
 //Find specfic course
@@ -81,7 +86,12 @@ router.get('/courses/:id', asyncHandler(async (req, res, next) => {
   console.log('Starting');
     let course = await Course.findByPk(req.params.id);
     console.log(course);
-      res.json({course});
+    res.json({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      holder: course.userId
+    });
   }));
   
 //Create course
@@ -126,8 +136,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next)
   console.log('Starting');
   let user = req.currentUser;
   let course = await Course.findByPk(req.params.id);
-  console.log(course);
-  if (course.userId === user.id) {
+  if (course.id === user.id) {
     course.update(req.body);
       console.log('updated');
       res.sendStatus(204);
