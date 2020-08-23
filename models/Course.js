@@ -4,46 +4,43 @@ const Sequelize = require('sequelize');
 
 module.exports = (sequelize) => {
     class Course extends Sequelize.Model {}
-    Course.init({
-        id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-          },
-          title: {
-            type: Sequelize.STRING,
-            allowNull: false, // disallow null
-            validate: {
+    Course.init ({
+      id: {
+          type: Sequelize.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+      },
+      title: {
+          type: Sequelize.STRING,
+          validate: {
               notEmpty: {
-                msg: 'Please provide a "title"'
+                  msg: 'Please provide a value for "title".'
               }
-             }
-          },
-          description: {
-            type: Sequelize.STRING,
-            allowNull: false, // disallow null
-            validate: {
-              notEmpty: {
-                msg: 'Please provide a "description"'
-              }
-             }
-          },
-          estimatedTime: {
-            type: Sequelize.STRING,
-            allowNull: true, // allow null
-          },
-          materialsNeeded: {
-            type: Sequelize.STRING,
-            allowNull: true, // allow null
           }
-
-       }, { sequelize });
+      },
+      description: {
+          type: Sequelize.TEXT,
+          validate: {
+              notEmpty: {
+                  msg: 'Please provide a value for "description".'
+              }
+          }
+      },
+      estimatedTime: {
+          type: Sequelize.STRING,
+          allownull: true,
+      },
+      materialsNeeded: {
+          type: Sequelize.STRING,
+          allownull: true,
+      }
+  }, { sequelize });
 
        Course.associate = (models) => {
         Course.belongsTo(models.User, {
-          as: 'userId', // alias
+          as: 'holder', // alias
           foreignKey: {
-            fieldName: 'id',
+            fieldName: 'userId',
             allowNull: 'false'
           },
         });
