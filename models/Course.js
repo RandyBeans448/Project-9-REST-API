@@ -14,19 +14,23 @@ module.exports = (sequelize) => {
           type: Sequelize.STRING,
           allowNull: false, // disallow null
           validate: {
-             notEmpty: {
-                  msg: 'Please provide a value for "title".'
+            titleValidator() {
+              if (req.body.title === null) {
+                throw new Error("title cant not be empty");
               }
+            }
           }
       },
       description: {
           type: Sequelize.TEXT,
           allowNull: false, // disallow null
           validate: {
-              notEmpty: {
-                  msg: 'Please provide a value for "description".'
+            descriptionValidator() {
+              if (req.body.description === null) {
+                throw new Error("description cant not be empty");
               }
           }
+        }
       },
       estimatedTime: {
           type: Sequelize.STRING,
@@ -49,5 +53,7 @@ module.exports = (sequelize) => {
       };
 
     return Course
+}
+
 
 
