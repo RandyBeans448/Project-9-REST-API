@@ -18,7 +18,7 @@ function asyncHandler(callback){
         next(error)
         console.log(error)
       }
-    }
+    } 
   }
 
   const authenticateUser = async (req, res, next) => {
