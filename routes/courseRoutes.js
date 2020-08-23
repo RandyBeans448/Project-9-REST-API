@@ -84,7 +84,7 @@ router.get('/courses', asyncHandler(async (req, res, next) => {
 //Find specfic course
 router.get('/courses/:id', asyncHandler(async (req, res, next) => {
   console.log('Starting');
-    let course = await Course.findByPk(req.params.id);
+    const course = await Course.findByPk(req.params.id);
     console.log(course);
     res.json({
       id: course.id,
