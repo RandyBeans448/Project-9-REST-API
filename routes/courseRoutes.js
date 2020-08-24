@@ -134,15 +134,23 @@ check('description')
 //Update course 
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-  let user = req.currentUser;
-  let course = await Course.findByPk(req.params.id);
+  let course;
+  let user = req.currentUser; 
+  course = await Course.findByPk(req.params.id);
   if (course.id === user.id) {
     course.update(req.body);
       console.log('updated');
-      res.sendStatus(204);
+      console.log(course.title);
+      console.log(course.description);
+        res.sendStatus(204);
+        if (course.title === null || course.description === null) {
+          res.sendStatus(403);
+          throw error;
+        }
   } else {
       console.log('Failed');
       res.sendStatus(403);
+      next();
   }
 }));
 
