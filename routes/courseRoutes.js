@@ -143,7 +143,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next)
       console.log(course.title);
       console.log(course.description);
         res.sendStatus(204);
-        if (course.title === null || course.description === null) {
+        if (!course.title || !course.description) {
           res.sendStatus(403);
           throw error;
         }
