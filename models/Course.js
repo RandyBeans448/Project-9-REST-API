@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
           allowNull: false, // disallow null
           validate: {
             titleValidator() {
-              if (req.body.title === null) {
+              if (body.title === null) {
                 throw new Error("title cant not be empty");
               }
             }
@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
           allowNull: false, // disallow null
           validate: {
             descriptionValidator() {
-              if (req.body.description === null) {
+              if (body.description === null) {
                 throw new Error("description cant not be empty");
               }
           }
@@ -54,6 +54,3 @@ module.exports = (sequelize) => {
 
     return Course
 }
-
-
-
