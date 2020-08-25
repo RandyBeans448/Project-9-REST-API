@@ -134,23 +134,19 @@ check('description')
 //Update course 
 router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next) => {
   console.log('Starting');
-  let course;
-  let user = req.currentUser; 
-  course = await Course.findByPk(req.params.id);
-  if (course.id === user.id) {
-    course.update(req.body);
-      console.log('updated');
-      console.log(course.title);
-      console.log(course.description);
-        res.sendStatus(204);
-        if (!course.title || !course.description) {
-          res.sendStatus(403);
-          throw error;
-        }
+  let user = req.currentUser;
+  let course = await Course.findByPk(req.params.id);
+  if (user.id === course.userId) {
+    if (req.body.title === undefined || req.body.description === undefined) { 
+      res.sendStatus(403).end();
+      throw new Error('Please provide a valid title/description');   
+    } else {
+      await course.update(req.body);
+      res.sendStatus(204);
+    }
   } else {
-      console.log('Failed');
-      res.sendStatus(403);
-      next();
+    res.sendStatus(403).end();
+    throw new Error('This user does not own this course');
   }
 }));
 
