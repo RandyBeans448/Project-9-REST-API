@@ -13,24 +13,10 @@ module.exports = (sequelize) => {
       title: {
           type: Sequelize.STRING,
           allowNull: false, // disallow null
-          validate: {
-            titleValidator() {
-              if (body.title === null) {
-                throw new Error("title cant not be empty");
-              }
-            }
-          }
       },
       description: {
           type: Sequelize.TEXT,
           allowNull: false, // disallow null
-          validate: {
-            descriptionValidator() {
-              if (body.description === null) {
-                throw new Error("description cant not be empty");
-              }
-          }
-        }
       },
       estimatedTime: {
           type: Sequelize.STRING,
@@ -44,7 +30,7 @@ module.exports = (sequelize) => {
 
        Course.associate = (models) => {
         Course.belongsTo(models.User, {
-          as: 'holder', // alias
+          as: 'user', // alias
           foreignKey: {
             fieldName: 'userId',
             allowNull: 'false'
