@@ -140,7 +140,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next)
   console.log(course.userId);
   if (user.id === course.userId) {
     if (req.body.title === undefined || req.body.description === undefined) {  
-      res.status(403).send({ error: 'Please provide a valid for title and the description'});
+      res.status(403).send({ error: 'Please provide a valid for the title and the description'});
     } else {
       await course.update(req.body);
       res.sendStatus(204);
