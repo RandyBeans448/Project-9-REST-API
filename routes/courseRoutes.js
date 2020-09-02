@@ -133,20 +133,29 @@ check('description')
 
 
 //Update course 
-router.put('/courses/:id', authenticateUser, asyncHandler(async (req, res, next) => {
-  console.log('Starting');
+router.put('/courses/:id', [
+check('title')
+  .exists({ checkNull: true, checkFalsy: true })
+  .withMessage('Please provide a value for "title"'),
+check('description')
+  .exists({ checkNull: true, checkFalsy: true })
+  .withMessage('Please provide a value for "description"')
+], authenticateUser, asyncHandler(async (req, res, next) => {
+
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+     const errorMessages = errors.array().map(error => error.msg);
+     return res.status(401).json({ errors: errorMessages });
+   }
+
   let user = req.currentUser;
   let course = await Course.findByPk(req.params.id);
   console.log(course.userId);
   if (user.id === course.userId) {
-    if (req.body.title === undefined || req.body.description === undefined) {  
-      res.status(403).send({ error: 'Please provide a valid for the title and the description'});
-    } else {
       await course.update(req.body);
       res.sendStatus(204);
-    }
   } else {
-    res.status(403).send({ error: 'This user does not own this course'});
+    res.status(400);
   }
 }));
 
