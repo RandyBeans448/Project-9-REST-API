@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "nodemon ./app.js",
     "seed": "cross-env DB_ENABLE_LOGGING=true node './seed'"
   },
   "keywords": [],
@@ -26,5 +26,7 @@
     "sequelize": "^6.3.3",
     "sqlite3": "^4.2.0"
   },
-    "engines": {"node": "v12.16.3"}
+  "engines": {
+    "node":"v12.16.3"
+  }
 }
