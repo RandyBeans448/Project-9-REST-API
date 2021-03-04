@@ -87,10 +87,17 @@ router.get('/courses', asyncHandler(async (req, res, next) => {
     res.json({ courses });
 }));
 
-//Find specfic course
+//Find specific course
 router.get('/courses/:id', asyncHandler(async (req, res, next) => {
   console.log('Starting');
     const course = await Course.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: { exclude: ['password','createdAt', 'updatedAt'] }
+        },
+      ],
       attributes: { exclude: ['createdAt', 'updatedAt'] }
     });
     console.log(course);
@@ -116,7 +123,7 @@ check('description')
     const errorMessages = errors.array().map(error => error.msg);
 
     // Return the validation errors to the client.
-    return res.status(401).json({ errors: errorMessages });
+    return res.status(400).json({ errors: errorMessages });
   }
 
   // Get the course from the request body.
@@ -127,10 +134,10 @@ check('description')
   console.log(course);
 
   // Set the status to 201 Created and end the response.
+  res.location(`/courses/${req.body.id}`);
   return res.status(201).end();
   
   }));
-
 
 //Update course 
 router.put('/courses/:id', [
@@ -145,7 +152,7 @@ check('description')
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
      const errorMessages = errors.array().map(error => error.msg);
-     return res.status(401).json({ errors: errorMessages });
+     return res.status(400).json({ errors: errorMessages });
    }
 
   let user = req.currentUser;
@@ -155,7 +162,7 @@ check('description')
       await course.update(req.body);
       res.sendStatus(204);
   } else {
-    res.status(400);
+    res.status(403).send({ error: 'This user does not own this course'}).end();
   }
 }));
 
@@ -168,7 +175,7 @@ router.delete('/courses/:id', authenticateUser, asyncHandler(async (req ,res) =>
           course.destroy();
           res.sendStatus(204);
         } else {
-          res.status(401).send({ error: 'This user does not own this course'});
+          res.status(403).send({ error: 'This user does not own this course'}).end();
         }
   }));
 
