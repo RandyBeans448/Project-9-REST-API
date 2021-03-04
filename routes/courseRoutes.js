@@ -106,7 +106,7 @@ router.get('/courses/:id', asyncHandler(async (req, res, next) => {
   
 //Create course
 //Working 
-router.post('/courses', [
+router.post('/courses', authenticateUser, [
   check('title')
   .exists({ checkNull: true, checkFalsy: true })
   .withMessage('Please provide a value for "title"'),
@@ -134,7 +134,7 @@ check('description')
   console.log(course);
 
   // Set the status to 201 Created and end the response.
-  res.location(`/courses/${req.body.id}`);
+  res.location(`/courses/${course.id}`);
   return res.status(201).end();
   
   }));
